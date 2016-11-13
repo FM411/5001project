@@ -4,10 +4,18 @@ import csv
 import math
 from sklearn.cluster import KMeans
 
-inputFile = file("./other_data/sta_result3.csv", "rb")
+#inputFile = file("./数据1-2/staff/sta_result_zhizuo.csv", "rb")
+#inputFile = file("./数据1-2/staff/sta_result_daoyan.csv", "rb")
+inputFile = file("./数据1-2/staff/sta_result_yanyuan.csv", "rb")
+#inputFile = file("./数据1-2/staff/sta_result_zhizuoren.csv", "rb")
+#inputFile = file("./数据1-2/staff/sta_result_faxing.csv", "rb")
 reader = csv.reader(inputFile)
 
-outputFile = file("./other_data/cluster3.csv", "w")
+#outputFile = file("./数据1-2/staff/staffCluster/kmeans/15-15-15-15-75/zhizhuo.csv", "w")
+#outputFile = file("./数据1-2/staff/staffCluster/kmeans/15-15-15-15-75/daoyan.csv", "w")
+outputFile = file("./数据1-2/staff/staffCluster/kmeans/5-5-5-5-25/yanyuan.csv", "w")
+#outputFile = file("./数据1-2/staff/staffCluster/kmeans/15-15-15-15-75/zhizhuoren.csv", "w")
+#outputFile = file("./数据1-2/staff/staffCluster/kmeans/15-15-15-15-75/faxing.csv", "w")
 writer = csv.writer(outputFile)
 
 staffList = []
@@ -16,45 +24,41 @@ for line in reader:
 	name = line[0]
 	movieNum = int(line[2])
 
-	boxList = line[1].split(";")[:-1]
-	average = 0
+	boxList = line[1].split(";")
+	boxSum = 0
 	for boxStr in boxList:
-		average += float(boxStr)
+		boxSum += float(boxStr)
 
-	average = average / int(line[2])
-
-	print "average: " + str(average)
-
-	#temp = math.pow(math.log(10, average + 0.01), 2) + math.pow(movieNum, 2)
-	#length = math.sqrt(temp)
-
-	#print "length: " + str(length)
-
+	print "boxSum: " + str(boxSum) + " log: " + str(math.log(boxSum + 0.01, 10))
 
 	staff.append(name)
-	staff.append(math.log(10, average + 0.01))
-	staff.append(movieNum)
-
-	#staff.append(math.log(10, average + 0.01) / length)
-	#staff.append(float(movieNum) / length)
-
-	staffList.append(staff)
+	staff.append(math.log(boxSum + 0.01, 10))
+	#staff.append(movieNum)
+	staffList.append(tuple(staff))
 
 kmeansList = []
 for item in staffList:
-	kmeansList.append(item[1:])
+	kmeansList.append([item[1], 0])
 
 print len(kmeansList)
-num_clusters = 10
+num_clusters = 25
 clf = KMeans(n_clusters=num_clusters)
 clf.fit(kmeansList)
 
-print list(clf.labels_)
+#print list(clf.labels_)
 print clf.cluster_centers_
 print clf.inertia_
 
-if len(list(clf.labels_)) != len(staffList):
-	print "fuck you"
+classList = []
+for j in xrange(num_clusters):
+	classList.append([])
 
-for i in xrange(len(staffList)):
-	writer.writerow([staffList[i][0], staffList[i][1], staffList[i][2], clf.labels_[i]])
+	for i in xrange(len(staffList)):
+		if clf.labels_[i] == j:
+			classList[j].append(staffList[i])
+
+for i in xrange(len(classList)):
+	classList[i] = sorted(classList[i], key=lambda x:x[1])
+
+	for item in classList[i]:
+		writer.writerow([item[0], item[1], i])
