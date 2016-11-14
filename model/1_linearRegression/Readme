@@ -1,4 +1,0 @@
-用现行回归跑了两个数据：
-1.2802个数据，里面的release date和totalbox都有，staff数据可能没有，type也可能没有。type，staff展开，每个value用0,1表示，年月日当做3个feature，还有release date和totalbox。
-2.1142个数据，
-
