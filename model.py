@@ -29,7 +29,7 @@ def kfold(X, Y, model, fold_num):
 	print numpy.average(numpy.array(scoreList))
 	print
 
-inputFile = file("./数据2/A8B1C1/2_A8B1C1_50.csv", "rb")
+inputFile = file("./数据2/A7B1C1/2_A7B1C1_50.csv", "rb")
 fileReader = csv.reader(inputFile)
 
 trainingDataXList = []
@@ -65,7 +65,7 @@ for item in trainingDataXList:
 X = numpy.array(trainingDataXList)
 Y = numpy.array(trainingDataYList)
 
-fold_num = 10
+fold_num = 5
 
 xgb = xgboost.XGBRegressor()
 kfold(X, Y, xgb, 10)
@@ -78,7 +78,7 @@ modelList.append(["MLPRegressor", neural_network.MLPRegressor()])
 
 #score method: neg_mean_absolute_error, neg_mean_squared_error, neg_median_absolute_error, r2
 for line in modelList:
-	metric = cross_val_score(line[1], trainingDataXList, trainingDataYList, cv = fold_num, scoring = 'r2')
+	metric = cross_val_score(line[1], trainingDataXList, trainingDataYList, cv = fold_num, scoring = 'neg_mean_squared_error')
 
 	print line[0]
 	print metric
