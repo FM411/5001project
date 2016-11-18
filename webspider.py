@@ -47,7 +47,6 @@ count = 0
 for line in boxReader:
 	if count >= 1:
 		movieNameList.append(line[0])
-
 	count += 1
 
 count = 0
